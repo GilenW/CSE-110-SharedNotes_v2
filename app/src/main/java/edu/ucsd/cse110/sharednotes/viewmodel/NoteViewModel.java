@@ -37,16 +37,16 @@ public class NoteViewModel extends AndroidViewModel {
         // The returned live data should update whenever there is a change in
         // the database, or when the server returns a newer version of the note.
         // Polling interval: 3s.
-        if(noteFuture != null && !noteFuture.isCancelled()){
-            noteFuture.cancel(true);
-        }
-        var executor = Executors.newSingleThreadScheduledExecutor();
-        noteFuture = executor.scheduleAtFixedRate(() -> {
-            note = repo.getSynced(title) ;
-        }, 0, 3000, TimeUnit.MILLISECONDS);
-        note = repo.getSynced(title);//added
+//        if(noteFuture != null && !noteFuture.isCancelled()){
+//            noteFuture.cancel(true);
+//        }
+//        var executor = Executors.newSingleThreadScheduledExecutor();
+//        noteFuture = executor.scheduleAtFixedRate(() -> {
+//            note = repo.getSynced(title) ;
+//        }, 0, 3000, TimeUnit.MILLISECONDS);
+//        note = repo.getSynced(title);//added
         if (note == null) {
-            note = repo.getLocal(title);
+            note = repo.getSynced(title);
         }
         return note;
     }
