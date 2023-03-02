@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class NoteAPI {
     // TODO: Implement the API using OkHttp!
@@ -72,5 +73,47 @@ public class NoteAPI {
 
         // We can use future.get(1, SECONDS) to wait for the result.
         return future;
+    }
+
+    @WorkerThread
+    public Note getNote(String title) {
+        // URLs cannot contain spaces, so we replace them with %20.
+        title = title.replace(" ", "%20");
+
+        var request = new Request.Builder()
+                .url("https://sharednotes.goto.ucsd.edu/notes/" + title)
+                .method("GET", null)
+                .build();
+
+        try (var response = client.newCall(request).execute()) {
+            assert response.body() != null;
+            var body = response.body().string();
+            Log.i("GETNOTE", body);
+            Note note = Note.fromJSON(body);
+            return note;//added
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @WorkerThread
+    public void putNote(String title, RequestBody requestBody) {
+        // URLs cannot contain spaces, so we replace them with %20.
+        title = title.replace(" ", "%20");
+
+        var request = new Request.Builder()
+                .url("https://sharednotes.goto.ucsd.edu/notes/" + title)
+                .method("PUT", requestBody)
+                .build();
+
+        try (var response = client.newCall(request).execute()) {
+            assert response.body() != null;
+            var body = response.body().string();
+            Log.i("PUTNOTE", body);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
